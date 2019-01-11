@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePizzasTable extends Migration
+class CreateOrdersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,11 @@ class CreatePizzasTable extends Migration
      */
     public function up()
     {
-        Schema::create('pizzas', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name')->unique();
-            $table->string('photo');
-            $table->longText('description');
-            $table->string('size');
-            $table->integer('price');
+            $table->string('user_id')->nullable();
+            $table->text('pizzas')->nullable();
+            $table->integer('amount')->nullable();
             $table->timestamps();
         });
     }
@@ -31,6 +29,6 @@ class CreatePizzasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pizzas');
+        Schema::dropIfExists('orders');
     }
 }

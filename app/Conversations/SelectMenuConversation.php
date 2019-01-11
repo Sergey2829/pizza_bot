@@ -8,54 +8,62 @@ use BotMan\BotMan\Messages\Outgoing\Question;
 use BotMan\BotMan\Messages\Outgoing\Actions\Button;
 use BotMan\BotMan\Messages\Attachments\Image;
 use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
+use Storage;
 use App\Pizza;
+use App\User;
+use App\Order;
+
 
 class SelectMenuConversation extends Conversation
 {
     
-    public function selectMenu()
-    {
+    
+    public function showMenu()
+    { 
         $pizzas = Pizza::all();
 
         foreach ($pizzas as $pizza) {
                $image = $pizza->photo;
-               $text = 'Пицца ' . $pizza->name . ' - ' . $pizza->size . ' - ' . $pizza->price
-               . "<br />" . $pizza->description;
+               $text = 'Пицца ' . $pizza->name . ' - ' . $pizza->size . ' - ' . $pizza->price . ' грн'
+               . PHP_EOL . $pizza->description;
                $name = $pizza->name;
                
                $this->addMenuItem($image, $text, $name); 
-        }
+        }     
+        
+        $question = Question::create('Приготовить для вас эту вкусную пиццу?')
+                    ->callbackId('is_start_order')
+                    ->addButtons([
+                        Button::create('Да, буду заказывать')->value('start_order'),
+                        Button::create('Сегодня только лапша!')->value('refuse_2'),  
+                    ]);
 
-        
-        
+        $this->ask($question, function (Answer $answer) {
+              if ($answer->isInteractiveMessageReply()) {
+                       if ($answer->getValue() === 'start_order') {
+                        $this->bot->startConversation(new OrderConversation());
+                       } else {
+                        $contents = Storage::get('info.txt');
+                        $this->say($contents); 
+                       }
+                   }
+        });
+             
     }
 
-    protected function addMenuItem($image, $text, $name)
+    public function addMenuItem($image, $text, $name)
     {
-        $attachment = new Image($image, [
-            'custom_payload' => true,
-        ]);
+
+        $attachment = new Image($image);
         
         $message = OutgoingMessage::create($text)
                     ->withAttachment($attachment);
-
-        $question = Question::create('')
-            ->callbackId('select_pizza')
-            ->addButtons([
-                Button::create('Заказать пиццу ' . $name)->value($name),
-            ]);
         
         $this->say($message);
-         
-        $this->ask($question, function (Answer $answer) {
-                if ($answer->isInteractiveMessageReply()) {
-                     
-                }
-           });  
     }
 
     public function run()
     {
-        $this->selectMenu();
+        $this->showMenu();
     }
 }
