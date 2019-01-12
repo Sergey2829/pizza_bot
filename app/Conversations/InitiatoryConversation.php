@@ -9,7 +9,8 @@ use BotMan\BotMan\Messages\Outgoing\Actions\Button;
 use BotMan\BotMan\Messages\Attachments\Image;
 use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
 use Storage;
-
+use Mail;
+ 
 
 class InitiatoryConversation extends Conversation
 {
@@ -17,6 +18,7 @@ class InitiatoryConversation extends Conversation
     
     public function askAim()
     {
+        
         $question = Question::create('Здравствуйте! Желаете заказать пиццу?')
             ->callbackId('select_aim')
             ->addButtons([
@@ -32,7 +34,6 @@ class InitiatoryConversation extends Conversation
                  } else {
                       $contents = Storage::get('info.txt');
                       $this->say($contents);
-                       
                  }  
              }
         });    
