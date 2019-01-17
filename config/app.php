@@ -28,6 +28,8 @@ return [
 
     'env' => env('APP_ENV', 'production'),
 
+    'admin_email' => '9ec955174e-bd5a6a@inbox.mailtrap.io',
+
     /*
     |--------------------------------------------------------------------------
     | Application Debug Mode

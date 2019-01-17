@@ -6,7 +6,7 @@ use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Outgoing\Question;
 use BotMan\BotMan\Messages\Outgoing\Actions\Button;
-use Storage;
+use App\Info;
 use App\Pizza;
 use App\User;
 use App\Order;
@@ -14,12 +14,13 @@ use Mail;
 
 class ConfirmationConversation extends Conversation
 {
+    use BaseConversation;
+
     public function confirmation()
     {
         $summary = $this->orderSummary();
-        $chatId = $this->bot->getUser()->getId();
-        $user = User::where('chat_id', $chatId)->first();
-        $order = Order::where('user_id', $user->id)->first();
+        $user = $this->getUser();
+        $order = $user->order;
         $orderData = $summary . PHP_EOL . '--------------------' . PHP_EOL 
                     . 'Ваш телефон - ' . $user->phone . PHP_EOL 
                     . 'Ваш адрес - ' . $user->address;
@@ -34,8 +35,8 @@ class ConfirmationConversation extends Conversation
                     ->addButtons([
                         Button::create('Да! Привезите поскорее!')->value('confirmation'),
                         Button::create('Добавить еще пиццу')->value('add_pizza'),
-                        Button::create('Изменить контактные данные')->value('change_data'),
-                        Button::create('Отменить! Мы лапше не изменяем!')->value('refuse_4'),
+                        Button::create('У меня другой телефон и/или адрес')->value('change_data'),
+                        Button::create('Отменить! Мы лапше не изменяем!')->value('refuse'),
                     ]);
         
          
@@ -44,14 +45,14 @@ class ConfirmationConversation extends Conversation
             
             if ($answer->getValue() === 'confirmation') {
                 $message = wordwrap($orderData, 70 , "\r\n");
-                mail('sergey2829@gmail.com', 'Заказ от Чатбота', 'test');
                 $this->say('Ваш заказ принят. Мы скоро позвоним для уточнения деталей.');
-                $contents = Storage::get('info.txt');
-                $this->say($contents);
+                $this->say(Info::find(1)->notice);
+   
                 Mail::raw($orderDataToAdmin, function ($message) {
-                    $message->from('sergey2829@gmail.com', 'OrderPizzaBot');
+                    
+                    $message->from('9ec955174e-bd5a6a@inbox.mailtrap.io', 'OrderPizzaBot');
                   
-                    $message->to('sergey2829@gmail.com')->subject('Новый заказ!');
+                    $message->to('9ec955174e-bd5a6a@inbox.mailtrap.io')->subject('Новый заказ!');
                   });
                 $order->delete();
 
@@ -64,9 +65,7 @@ class ConfirmationConversation extends Conversation
                 $this->bot->startConversation(new DataCollectionConversation());
 
             } else {
-
-                $contents = Storage::get('info.txt');
-                $this->say($contents);
+                $this->say(Info::find(1)->notice);
                 $order->delete();
             }
         }
@@ -76,9 +75,8 @@ class ConfirmationConversation extends Conversation
     protected function orderSummary()
     {
         $pizzas = Pizza::all();
-        $chatId = $this->bot->getUser()->getId();
-        $user = User::where('chat_id', $chatId)->first();
-        $order = Order::where('user_id', $user->id)->first();
+        $user = $this->getUser();
+        $order = $user->order;
 
         $result = '';
         $pizzsStr = $order->pizzas;

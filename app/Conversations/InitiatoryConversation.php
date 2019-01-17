@@ -6,11 +6,7 @@ use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Outgoing\Question;
 use BotMan\BotMan\Messages\Outgoing\Actions\Button;
-use BotMan\BotMan\Messages\Attachments\Image;
-use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
-use Storage;
-use Mail;
- 
+use App\Info;
 
 class InitiatoryConversation extends Conversation
 {
@@ -32,8 +28,7 @@ class InitiatoryConversation extends Conversation
                       $this->bot->typesAndWaits(2);
                       $this->bot->startConversation(new SelectMenuConversation());
                  } else {
-                      $contents = Storage::get('info.txt');
-                      $this->say($contents);
+                      $this->say(Info::find(1)->notice);
                  }  
              }
         });    

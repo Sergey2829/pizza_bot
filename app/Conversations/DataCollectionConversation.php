@@ -7,30 +7,29 @@ use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use App\Pizza;
 use App\User;
+use App\Info;
 
 class DataCollectionConversation extends Conversation
 {
+    use BaseConversation;
      
     public function askTel()
     {
-        $this->ask('Укажите номер Вашего телефона (актуальный!). Без обратного звонка мы не сможем отправить Ваш заказ',
+        $this->ask(Info::find(2)->notice,
                     function (Answer $answer) {
                          $chatId = $this->bot->getUser()->getId();
                          $user = User::where('chat_id', $chatId)->first();
                           $user->phone = $answer->getText();
                           $user->save();
-                          $this->bot->typesAndWaits(1);
                           $this->askAddress();
-                    });
-
-        
+                    }); 
     }
 
     public function askAddress() 
     {
         $this->ask('Спасибо! Теперь укажите Ваш адрес', function (Answer $answer) {
-              $chatId = $this->bot->getUser()->getId();
-              $user = User::where('chat_id', $chatId)->first();
+              
+              $user = $this->getUser();
               $user->address = $answer->getText();
               $user->save();
 

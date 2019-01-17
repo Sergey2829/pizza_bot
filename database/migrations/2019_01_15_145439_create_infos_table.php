@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAdditivesTable extends Migration
+class CreateInfosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,9 @@ class CreateAdditivesTable extends Migration
      */
     public function up()
     {
-        Schema::create('additives', function (Blueprint $table) {
+        Schema::create('infos', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name')->unique();
-            $table->integer('price');
+            $table->text('notice');
             $table->timestamps();
         });
     }
@@ -28,6 +27,6 @@ class CreateAdditivesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('additives');
+        Schema::dropIfExists('infos');
     }
 }
