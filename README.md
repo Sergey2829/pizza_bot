@@ -4,6 +4,6 @@
 
 ### Telegram bot to order pizza
 
-Использовалась Ботман студио (Ларавель + библиотека ботман для разработки чат-ботов). 
+Botman Studio was used (Laravel + Botman Library for developing chat bots).
 
-Бот предоставляет пользователю меню и позволяет выборать пиццу. После этого бот собирает контактные данные пользователя и отправляет администратору пиццерии на почту. 
+The bot provides the user with a menu and allows you to select a pizza. After this, the bot collects the contact information of the user and sends it to the pizzeria administrator by mail.
