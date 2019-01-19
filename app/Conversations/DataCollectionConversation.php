@@ -17,11 +17,10 @@ class DataCollectionConversation extends Conversation
     {
         $this->ask(Info::find(2)->notice,
                     function (Answer $answer) {
-                         $chatId = $this->bot->getUser()->getId();
-                         $user = User::where('chat_id', $chatId)->first();
-                          $user->phone = $answer->getText();
-                          $user->save();
-                          $this->askAddress();
+                        $user = $this->getUser();
+                        $user->phone = $answer->getText();
+                        $user->save();
+                        $this->askAddress();
                     }); 
     }
 

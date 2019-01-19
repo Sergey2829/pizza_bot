@@ -47,7 +47,7 @@ class SelectMenuConversation extends Conversation
              
     }
 
-    public function addMenuItem($image, $text, $name)
+    protected function addMenuItem($image, $text, $name)
     {
 
         $attachment = new Image($image);  

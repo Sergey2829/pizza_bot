@@ -19,14 +19,17 @@ class InitiatoryConversation extends Conversation
             ->callbackId('select_aim')
             ->addButtons([
                 Button::create('Посмотреть меню')->value('menu'),
+                Button::create('Сделать заказ')->value('order'),
                 Button::create('Не в этот раз. Решили варить лапшу')->value('refuse'),
             ]);
 
         $this->ask($question, function (Answer $answer) {
              if ($answer->isInteractiveMessageReply()) {
-                 if ($answer->getValue() === 'menu') {
+                   if ($answer->getValue() === 'menu') {
                       $this->bot->typesAndWaits(2);
                       $this->bot->startConversation(new SelectMenuConversation());
+                 } elseif ($answer->getValue() === 'order') {
+                    $this->bot->startConversation(new OrderConversation());
                  } else {
                       $this->say(Info::find(1)->notice);
                  }  
